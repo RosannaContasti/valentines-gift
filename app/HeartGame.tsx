@@ -22,7 +22,7 @@ export default function HeartGame() {
 
     setScore((prev) => {
       const next = prev + 1;
-      if (next >= 5) {
+      if (next >= 10) {
         playSound("/sounds/win.wav");
         setFinished(true);
       }
@@ -54,8 +54,6 @@ export default function HeartGame() {
 
         {!prizeUnlocked ? (
           <>
-
-
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -78,7 +76,7 @@ export default function HeartGame() {
             >
               Achievement unlocked:
               <br />
-              ⚔️ LEGENDARY LOVE FOR ROSI 💘 ⚔️
+              ⚔️ LEGENDARY LOVE ⚔️
             </motion.p>
 
             <motion.button
@@ -103,38 +101,6 @@ export default function HeartGame() {
               transition={{ type: "spring", stiffness: 200, damping: 20, duration: 0.5 }}
               className="relative my-6 w-full max-w-[320px]"
             >
-              {/* Corazones flotantes alrededor de la imagen */}
-              {[...Array(12)].map((_, i) => {
-                const angle = (i / 12) * Math.PI * 2 + Math.PI / 2;
-                const x = 50 + Math.cos(angle) * 48;
-                const y = 50 + Math.sin(angle) * 48;
-                const hearts = ["❤️", "💖", "💗", "💕", "💘"];
-                return (
-                  <motion.span
-                    key={i}
-                    className="absolute text-2xl md:text-3xl pointer-events-none"
-                    style={{
-                      left: `${x}%`,
-                      top: `${y}%`,
-                      transform: "translate(-50%, -50%)",
-                    }}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{
-                      opacity: [0.6, 1, 0.6],
-                      scale: [0.8, 1.2, 0.8],
-                      y: [0, -8, 0],
-                    }}
-                    transition={{
-                      duration: 2 + (i % 3) * 0.5,
-                      repeat: Infinity,
-                      delay: i * 0.15,
-                    }}
-                  >
-                    {hearts[i % hearts.length]}
-                  </motion.span>
-                );
-              })}
-
               <div className="relative w-full aspect-4/3 rounded-lg overflow-hidden border-4 border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.5)]">
                 <Image
                   src="/images/win.png"
@@ -146,182 +112,53 @@ export default function HeartGame() {
                 />
               </div>
             </motion.div>
-
-
           </>
         )}
       </motion.div>
     );
   }
 
+  // Cada acierto hace que los corazones caigan más rápido (duración menor)
+  const fallDuration = Math.max(0.75, 2.2 - score * 0.35);
+  const heartDelay = Math.max(0.25, 0.7 - score * 0.1); // también menos delay entre apariciones
+
   return (
-    <motion.div
-      animate={screenControls}
-      className="relative w-[300px] h-[400px] border-4 border-pink-400 bg-black overflow-hidden pixel"
-    >
-      <motion.p
-        key={score}
-        initial={{ scale: 1.4 }}
-        animate={{ scale: 1 }}
-        className="text-xs text-center py-2 text-pink-300"
+    <>
+      <p
+        className="absolute top-0 left-0 right-0 text-center py-2 text-pink-300 z-10 pixel"
         style={{ fontSize: "min(6vw, 48px)" }}
       >
-        SCORE: {score} / 5
-      </motion.p>
+        SCORE: {score} / 10
+      </p>
+      <motion.div
+        animate={screenControls}
+        className="relative w-[300px] h-[400px] border-4 border-pink-400 bg-black pixel overflow-hidden"
+      >
 
-      {[...Array(3)].map((_, i) => (
-        <motion.button
-          key={i}
-          onClick={handleCatch}
-          initial={{ y: -60, x: Math.random() * 240, scale: 1 }}
-          animate={{
-            y: 350,
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 2 + Math.random(),
-            repeat: Infinity,
-            delay: i * 0.6,
-            ease: "linear",
-          }}
-          whileHover={{ scale: 1.4 }}
-          whileTap={{ scale: 0.8 }}
-          className="absolute text-10xl drop-shadow-[0_0_8px_hotpink]"
-          style={{ fontSize: "min(6vw, 100px)" }}
-        >
-          ❤️
-        </motion.button>
-      ))}
-    </motion.div>
+        {[...Array(3)].map((_, i) => (
+          <motion.button
+            key={`${i}-${score}`}
+            onClick={handleCatch}
+            initial={{ y: -60, x: Math.random() * 240, scale: 1 }}
+            animate={{
+              y: 350,
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: fallDuration + (i % 2) * 0.15,
+              repeat: Infinity,
+              delay: i * heartDelay,
+              ease: "linear",
+            }}
+            whileHover={{ scale: 1.4 }}
+            whileTap={{ scale: 0.8 }}
+            className="absolute text-10xl drop-shadow-[0_0_8px_hotpink]"
+            style={{ fontSize: "min(6vw, 100px)" }}
+          >
+            ❤️
+          </motion.button>
+        ))}
+      </motion.div>
+    </>
   );
 }
-
-// "use client";
-
-// import { motion, useAnimation } from "framer-motion";
-// import { useState } from "react";
-// import { playSound } from "./useSound";
-
-// const LEVELS = [
-//   { goal: 3, message: "💖 Te quiero 💖" },
-//   { goal: 4, message: "✨ Sos mi persona ✨" },
-//   { goal: 5, message: "💘 Leo… ¿querés ser mi San Valentín? 💘" },
-// ];
-
-// export default function HeartGame() {
-//   const [level, setLevel] = useState(0);
-//   const [score, setScore] = useState(0);
-//   const [finished, setFinished] = useState(false);
-//   const [showMessage, setShowMessage] = useState(false);
-
-//   const screenControls = useAnimation();
-
-//   const handleCatch = async () => {
-//     playSound("/sounds/blip.wav");
-
-//     await screenControls.start({
-//       x: [0, -4, 4, -2, 2, 0],
-//       transition: { duration: 0.25 },
-//     });
-
-//     setScore((prev) => {
-//       const next = prev + 1;
-
-//       if (next >= LEVELS[level].goal) {
-//         playSound("/sounds/levelup.wav");
-//         setShowMessage(true);
-
-//         setTimeout(() => {
-//           setShowMessage(false);
-//           setScore(0);
-
-//           if (level === LEVELS.length - 1) {
-//             playSound("/sounds/win.wav");
-//             setFinished(true);
-//           } else {
-//             setLevel((l) => l + 1);
-//           }
-//         }, 1800);
-//       }
-
-//       return next;
-//     });
-//   };
-
-//   // 🏆 FINAL
-//   if (finished) {
-//     return (
-//       <motion.div
-//         initial={{ scale: 0 }}
-//         animate={{ scale: 1 }}
-//         transition={{ type: "spring", stiffness: 180 }}
-//         className="fixed inset-0 flex flex-col items-center justify-center bg-black pixel z-50 p-4"
-//       >
-//         <motion.h2
-//           animate={{ scale: [1, 1.15, 1] }}
-//           transition={{ repeat: Infinity, duration: 0.9 }}
-//           className="leading-none text-pink-400 text-center"
-//           style={{ fontSize: "min(25vw, 120px)" }}
-//         >
-//           🎉 YOU WIN 🎉
-//         </motion.h2>
-
-//         <p className="text-xl md:text-2xl text-pink-300 text-center mt-8">
-//           Leo unlocked:
-//           <br />
-//           💖 My Valentine 💖
-//         </p>
-
-//         <p className="text-base md:text-lg text-pink-300 animate-pulse text-center mt-6">
-//           Achievement unlocked:
-//           <br />
-//           LEGENDARY LOVE 💘
-//         </p>
-//       </motion.div>
-//     );
-//   }
-
-//   return (
-//     <motion.div
-//       animate={screenControls}
-//       className="relative w-[300px] h-[400px] border-4 border-pink-400 bg-black overflow-hidden pixel"
-//     >
-//       {/* HUD */}
-//       <div className="text-xs text-center py-2 text-pink-300">
-//         LEVEL {level + 1} · SCORE {score}/{LEVELS[level].goal}
-//       </div>
-
-//       {/* MENSAJE DE NIVEL */}
-//       {showMessage && (
-//         <motion.div
-//           initial={{ opacity: 0, scale: 0.8 }}
-//           animate={{ opacity: 1, scale: 1 }}
-//           className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 text-pink-400 text-lg text-center px-6"
-//         >
-//           {LEVELS[level].message}
-//         </motion.div>
-//       )}
-
-//       {/* CORAZONES */}
-//       {[...Array(3)].map((_, i) => (
-//         <motion.button
-//           key={`${level}-${i}`}
-//           onClick={handleCatch}
-//           initial={{ y: -60, x: Math.random() * 240 }}
-//           animate={{ y: 350, scale: [1, 1.2, 1] }}
-//           transition={{
-//             duration: 2 - level * 0.3,
-//             repeat: Infinity,
-//             delay: i * 0.6,
-//             ease: "linear",
-//           }}
-//           whileHover={{ scale: 1.4 }}
-//           whileTap={{ scale: 0.8 }}
-//           className="absolute text-10xl drop-shadow-[0_0_12px_hotpink]"
-//         >
-//           ❤️
-//         </motion.button>
-//       ))}
-//     </motion.div>
-//   );
-// }

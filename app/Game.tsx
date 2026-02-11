@@ -42,7 +42,7 @@ export default function Game() {
         <p className="text-pink-300">📜 HOW TO PLAY</p>
         <p>❤️ Hearts will fall from the sky</p>
         <p>🖱️ Click the hearts to catch them</p>
-        <p>🎯 Catch 5 hearts to win</p>
+        <p>🎯 Catch 10 hearts to win</p>
         <p>💥 Each heart = true love points</p>
         <p className="text-pink-400 animate-pulse">
           PRO TIP: Love never misses 😉
