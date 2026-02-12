@@ -148,7 +148,7 @@ export default function HeartGame() {
   }
 
   const items = [
-    { type: "heart", emoji: "❤️", duration: 3.2 },
+    { type: "heart",emoji: "❤️", duration: 3.2 },
     { type: "bubu", emoji: "🐻", duration: 2 },
     { type: "dudu", emoji: "🐻‍❄️", duration: 2 },
   ];
