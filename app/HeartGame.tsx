@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useAnimation } from "framer-motion";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
 import { playSound } from "./useSound";
@@ -10,6 +10,8 @@ export default function HeartGame() {
   const [finished, setFinished] = useState(false);
   const [prizeUnlocked, setPrizeUnlocked] = useState(false);
   const screenControls = useAnimation();
+  const [floatingMessage, setFloatingMessage] = useState<string | null>(null)
+
 
   const handleCatch = async () => {
     playSound("/sounds/blip.wav");
@@ -22,6 +24,27 @@ export default function HeartGame() {
 
     setScore((prev) => {
       const next = prev + 1;
+
+      const messages = [
+        "Te quiero mucho💕",
+        "Eres mi persona favorita 🥹",
+        "Amo tu sonrisa 🥰",
+        "Dudu & Bubu x 100pre💖",
+        "Eres mi lugar seguro ✨",
+        "Amo tu pielcita y olorcito🤩",
+        "Amo abracito y besito 💘",
+        "Siempre eres tu 💞",
+        "Mantita Dudu y Bubu 💓",
+        "Tu amor es mi todo 💓",
+        "Amo que seas tu ❤️"
+      ]
+      setFloatingMessage(messages[next - 1] || "💖")
+
+      setTimeout(() => {
+        setFloatingMessage(null);
+      }, 1200);
+
+
       if (next >= 10) {
         playSound("/sounds/win.wav");
         setFinished(true);
@@ -43,26 +66,29 @@ export default function HeartGame() {
         transition={{ type: "spring", stiffness: 180, damping: 20 }}
         className="fixed inset-0 flex flex-col items-center justify-center bg-black pixel z-50 p-4 overflow-y-auto"
       >
-        <motion.h2
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ repeat: Infinity, duration: 0.9 }}
-          className="leading-none text-pink-400 font-black pixel text-center"
-          style={{ fontSize: "min(6vw, 150px)" }}
-        >
-          🎉 YOU WIN 🎉
-        </motion.h2>
+
 
         {!prizeUnlocked ? (
           <>
+            <motion.h2
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ repeat: Infinity, duration: 0.9 }}
+              className="leading-none text-pink-400 font-black pixel text-center"
+              style={{ fontSize: "min(6vw, 150px)" }}
+            >
+              🎉 YOU WIN 🎉
+            </motion.h2>
+
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-xl md:text-2xl text-pink-300 text-center items-center"
+              className="text-xl md:text-2xl text-pink-300 text-center items-center mt-14 mb-14"
               style={{ fontSize: "min(6vw, 48px)" }}
 
             >
               Leo unlocked:
+              <br />
               <br />
               💖 Rosi's Forever Love 💖
             </motion.p>
@@ -71,10 +97,11 @@ export default function HeartGame() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-base md:text-lg text-pink-300 animate-pulse text-center mt-4"
+              className="text-base md:text-lg text-pink-300 animate-pulse text-center mt-14 mb-14"
               style={{ fontSize: "min(6vw, 48px)" }}
             >
               Achievement unlocked:
+              <br />
               <br />
               ⚔️ LEGENDARY LOVE ⚔️
             </motion.p>
@@ -95,79 +122,103 @@ export default function HeartGame() {
         ) : (
           <>
             {/* Contenedor de imagen + corazones flotantes */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: "spring", stiffness: 200, damping: 20, duration: 0.5 }}
-              className="relative my-6 w-full max-w-[320px]"
-            >
-              <div className="relative w-full min-h-[200px] aspect-4/3 rounded-lg overflow-hidden border-4 border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.5)]">
+
+            <div className="flex items-center justify-center min-h-screen w-full">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                className="relative min-w-[600px] min-h-[1200px] aspect-[4/3] rounded-lg overflow-hidden border-4 border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.6)]"
+              >
                 <Image
-                  src="win.png"  // ✅ Simplemente así, sin condicional
+                  src="/prize.png"
                   alt="Victory - Leo unlocked: My Valentine"
                   fill
                   className="object-contain"
-                  sizes="(max-width: 400px) 100vw, 320px"
                   priority
-                  unoptimized
                 />
-              </div>
+              </motion.div>
+            </div>
 
-<div className="relative w-full max-w-[320px]">
-  <img 
-    src="/images/prize.png" 
-    alt="Victory - Leo unlocked: My Valentine"
-    className="w-full h-auto object-contain rounded-lg border-4 border-pink-500"
-  />
-</div>
-            </motion.div>
           </>
         )}
       </motion.div>
     );
   }
 
-  // Ritmo más tranquilo: caída más lenta y más espacio entre corazones
-  const fallDuration = Math.max(1.4, 3.5 - score * 0.2);
-  const heartDelay = Math.max(0.5, 1.1 - score * 0.06);
+  const items = [
+    { type: "heart", emoji: "❤️", duration: 3.2 },
+    { type: "bubu", emoji: "🐻", duration: 2 },
+    { type: "dudu", emoji: "🐻‍❄️", duration: 2 },
+  ];
 
   return (
     <>
+      {/* SCORE arriba */}
       <p
-        className="absolute top-0 left-0 right-0 text-center py-2 text-pink-300 z-10 pixel"
+        className="absolute top-4 left-0 right-0 text-center text-pink-200 pixel z-20"
         style={{ fontSize: "min(6vw, 48px)" }}
       >
         SCORE: {score} / 10
       </p>
+
+      {/* Área de juego full screen */}
       <motion.div
         animate={screenControls}
-        className="relative w-[300px] h-[400px] border-4 border-pink-400 bg-black pixel overflow-hidden"
+        className="relative w-screen h-screen overflow-hidden pixel"
       >
-
-        {[...Array(3)].map((_, i) => (
-          <motion.button
-            key={`${i}-${score}`}
-            onClick={handleCatch}
-            initial={{ y: -60, x: Math.random() * 240, scale: 1 }}
-            animate={{
-              y: 350,
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: fallDuration + (i % 2) * 0.15,
-              repeat: Infinity,
-              delay: i * heartDelay,
-              ease: "linear",
-            }}
-            whileHover={{ scale: 1.4 }}
-            whileTap={{ scale: 0.8 }}
-            className="absolute text-10xl drop-shadow-[0_0_8px_hotpink]"
-            style={{ fontSize: "min(6vw, 100px)" }}
-          >
-            ❤️
-          </motion.button>
-        ))}
+        {[...Array(6)].map((_, i) => {
+          const item = items[i % items.length];
+          return (
+            <motion.button
+              key={`${i}-${score}`}
+              onClick={handleCatch}
+              initial={{
+                y: -100,
+                x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 300),
+              }}
+              animate={{
+                y: (typeof window !== "undefined" ? window.innerHeight : 400) + 100,
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: item.duration,
+                repeat: Infinity,
+                delay: i * 0.4,
+                ease: "linear",
+              }}
+              whileTap={{ scale: 0.8 }}
+              className="absolute drop-shadow-[0_0_15px_hotpink]"
+              style={{ fontSize: "min(10vw, 120px)" }}
+            >
+              {item.emoji}
+            </motion.button>
+          );
+        })}
       </motion.div>
+
+      <AnimatePresence>
+        {floatingMessage && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.5 }}
+            className="
+        fixed inset-0
+        flex items-center justify-center
+        text-pink-200 pixel z-50 text-center
+        drop-shadow-[0_0_25px_hotpink]
+        pointer-events-none
+      "
+            style={{ fontSize: "min(6vw, 60px)" }}
+          >
+            {floatingMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </>
+
   );
 }

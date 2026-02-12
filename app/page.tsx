@@ -20,7 +20,8 @@ export default function Home() {
             setStart(true);
           }}
           className="pixel bg-pink-500 px-6 py-4 border-4 border-black text-xl"
-          style={{ fontSize: "min(6vw, 108px)" }}
+          style={{ fontSize: "min(6vw, 72px)" }}
+
         >
           ▶ INSERT COIN
         </motion.button>
