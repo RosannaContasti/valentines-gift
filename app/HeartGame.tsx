@@ -131,11 +131,12 @@ export default function HeartGame() {
                 className="relative min-w-[600px] min-h-[1200px] aspect-[4/3] rounded-lg overflow-hidden border-4 border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.6)]"
               >
                 <Image
-                  src="/prize.png"
+                  src={`${process.env.NODE_ENV === "production" ? "/valentines-gift" : ""}/prize.png`}
                   alt="Victory - Leo unlocked: My Valentine"
                   fill
                   className="object-contain"
                   priority
+                  unoptimized
                 />
               </motion.div>
             </div>

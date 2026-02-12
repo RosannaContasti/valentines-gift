@@ -1,20 +1,17 @@
 /** @type {import('next').NextConfig} */
 
-const isProd = process.env.NODE_ENV === 'production';
-
-console.log('isProd', isProd);
+// En producción (GitHub Pages) la app está en /valentines-gift. En desarrollo, en la raíz.
+const isProd = process.env.NODE_ENV === "production";
+const basePath = isProd ? "/valentines-gift" : "";
+const assetPrefix = isProd ? "/valentines-gift/" : "";
 
 const nextConfig = {
-  output: 'export',
+  output: "export",
   images: {
     unoptimized: true,
   },
-  // basePath: '/valentines-gift',
- // basePath: process.env.NODE_ENV === 'production' ? '/valentines-gift' : '',
- //basePath: isProd ? '/valentines-gift' : '',
-// assetPrefix: isProd ? '/valentines-gift/' : '',
-basePath: "/valentines-gift",
-assetPrefix: "/valentines-gift/",
-}
+  basePath,
+  assetPrefix,
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
