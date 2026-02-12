@@ -4,7 +4,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/valentines-gift',
+  // basePath: '/valentines-gift',
+  basePath: process.env.NODE_ENV === 'production' ? '/valentines-gift' : '',
 }
 
 module.exports = nextConfig

@@ -101,16 +101,25 @@ export default function HeartGame() {
               transition={{ type: "spring", stiffness: 200, damping: 20, duration: 0.5 }}
               className="relative my-6 w-full max-w-[320px]"
             >
-              <div className="relative w-full aspect-4/3 rounded-lg overflow-hidden border-4 border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.5)]">
+              <div className="relative w-full min-h-[200px] aspect-4/3 rounded-lg overflow-hidden border-4 border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.5)]">
                 <Image
-                  src="/images/win.png"
+                  src="win.png"  // ✅ Simplemente así, sin condicional
                   alt="Victory - Leo unlocked: My Valentine"
                   fill
                   className="object-contain"
                   sizes="(max-width: 400px) 100vw, 320px"
                   priority
+                  unoptimized
                 />
               </div>
+
+<div className="relative w-full max-w-[320px]">
+  <img 
+    src="/images/prize.png" 
+    alt="Victory - Leo unlocked: My Valentine"
+    className="w-full h-auto object-contain rounded-lg border-4 border-pink-500"
+  />
+</div>
             </motion.div>
           </>
         )}
@@ -118,9 +127,9 @@ export default function HeartGame() {
     );
   }
 
-  // Cada acierto hace que los corazones caigan más rápido (duración menor)
-  const fallDuration = Math.max(0.75, 2.2 - score * 0.35);
-  const heartDelay = Math.max(0.25, 0.7 - score * 0.1); // también menos delay entre apariciones
+  // Ritmo más tranquilo: caída más lenta y más espacio entre corazones
+  const fallDuration = Math.max(1.4, 3.5 - score * 0.2);
+  const heartDelay = Math.max(0.5, 1.1 - score * 0.06);
 
   return (
     <>
